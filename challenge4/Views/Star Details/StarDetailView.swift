@@ -124,6 +124,7 @@ struct StarDetailView: View {
                     Wave(baselineFraction: 0.33, amplitudeFraction: 0.05, inverted: true)
                         .fill(Color("DarkOrangeBackground"))
                         .ignoresSafeArea()
+                        .accessibilityHidden(true)
                 } else {
                     Color("Background")
                         .ignoresSafeArea()
@@ -135,8 +136,14 @@ struct StarDetailView: View {
                     // Back button and date picker remain at the top
                     HStack {
                         BackButton()
+                            .accessibilityLabel("Back")
+                            .accessibilityHint("Returns to the previous screen")
+                            .padding(.leading, 10)
                             .padding(.leading, 10)
                         DatePicker(selectedDate: $selectedDate, onPreviousDay: goToPreviousDay, onNextDay: goToNextDay)
+                            .accessibilityElement(children: .combine)
+                            .accessibilityLabel("Selected date: \(formattedDate)")
+                            .accessibilityHint("Swipe left or right to change the day")
                             .padding(.leading, 40)
                             .offset(x : 0, y: 20)
                         Spacer()
@@ -146,6 +153,9 @@ struct StarDetailView: View {
     
                     if isCompleted {
                         TabBar(selectedTab: $selectedTab)
+                            .accessibilityElement(children: .contain)
+                            .accessibilityLabel("Tab bar")
+                            .accessibilityHint("Select Parent, Child, or Games logs")
                             .padding(.top, -2)
                         
                         VStack(spacing: 12) {
@@ -205,6 +215,12 @@ struct StarDetailView: View {
         .onAppear {
             fetchLogs()
         }
+        .accessibilityAction(named: "Previous Day") {
+            goToPreviousDay()
+        }
+        .accessibilityAction(named: "Next Day") {
+            goToNextDay()
+        }
         .onChange(of: selectedDate) { _, _ in
             if animationDirection == .none {
                 fetchLogs()
@@ -227,7 +243,11 @@ struct StarDetailView: View {
                 }
         )
     }
-    
+    private var formattedDate: String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .full
+        return formatter.string(from: selectedDate)
+    }
     private func getTransition() -> AnyTransition {
         switch animationDirection {
         case .left:

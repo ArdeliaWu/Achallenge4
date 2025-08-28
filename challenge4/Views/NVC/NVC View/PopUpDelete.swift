@@ -13,8 +13,9 @@ struct PopUpDelete: View {
     
     var body: some View {
         if isPresented {
-            ZStack{
-                // Background dimmed - covers entire screen
+            ZStack {
+
+//                // Background dimmed
                 Color.black.opacity(0.5)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .ignoresSafeArea(.all, edges: .all)
@@ -65,12 +66,15 @@ struct PopUpDelete: View {
                     }
                     .padding(.bottom, 25)
                 }
-                .frame(width: 320)
+                .frame(width: 360)
+
                 .background(Color.popUpBackground)
                 .cornerRadius(20)
                 .shadow(radius: 10)
             }
+            .offset(x: 0, y: -300)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .ignoresSafeArea()
             .transition(.opacity)
             .padding(.top, -600)
         }

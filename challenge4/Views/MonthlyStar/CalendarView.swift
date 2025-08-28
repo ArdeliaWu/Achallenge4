@@ -119,6 +119,8 @@ struct CalendarView: View {
                     // Top navbar row
                     HStack {
                         BackButton()
+                            .accessibilityLabel("Go back")
+                            .accessibilityHint("Returns to previous screen")
                         Spacer()
                         Text("Memory Stars")
                             .font(.title)
@@ -139,6 +141,8 @@ struct CalendarView: View {
                                 .font(.title)
 //                                .fontWeight(.bold)
                         }
+                        .accessibilityLabel("Previous Month")
+                        .accessibilityHint("Navigates to the previous month")
                         .frame(width: 44, height: 44)
                         
                         Text(monthYear)
@@ -146,6 +150,8 @@ struct CalendarView: View {
                             .fontWeight(.semibold)
                             .foregroundColor(.white)
                             .frame(minWidth: 120)
+                            .accessibilityAddTraits(.isHeader)
+                            .accessibilityLabel("Current month: \(monthYear)")
                         
                         Button(action: {
                             goToNextMonth()
@@ -153,8 +159,11 @@ struct CalendarView: View {
                             Image(systemName: "chevron.right")
                                 .foregroundColor(isAtPresentMonth ? .gray : .white)
                                 .font(.title)
+
 //                                .fontWeight(.bold)
                         }
+                        .accessibilityLabel("Next Month")
+                        .accessibilityHint("Navigates to the next month")
                         .frame(width: 44, height: 44)
                         .disabled(isAtPresentMonth)
                     }

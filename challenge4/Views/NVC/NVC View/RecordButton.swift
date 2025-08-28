@@ -96,6 +96,8 @@ struct RecordButton: View {
                     .clipShape(Circle())
                     .shadow(color: .microphoneDropShadow.opacity(1), radius: 0, x: 0, y: 8)
             }
+            .accessibilityLabel(recorderController.isRecording ? "Stop recording" : "Start recording")
+            .accessibilityHint("Double tap to \(recorderController.isRecording ? "stop" : "start") recording your voice")
 
             HStack {
                 Spacer()
@@ -134,6 +136,8 @@ struct RecordButton: View {
                         .clipShape(Circle())
                         .shadow(color: .checkmarkDropShadow.opacity(1), radius: 0, x: 0, y: 8)
                 }
+                .accessibilityLabel("Save and continue")
+                .accessibilityHint("Saves your recording and moves to the next step")
             }
             .padding(.horizontal, 70)
             HStack {
@@ -156,6 +160,8 @@ struct RecordButton: View {
                             .clipShape(Circle())
                             .shadow(color: .trashDropShadow.opacity(1), radius: 0, x: 0, y: 8)
                     }
+                    .accessibilityLabel("Delete recording")
+                    .accessibilityHint("Removes the current recording permanently")
                     Spacer()
                     
                 } else if let path = feelingParent?.AudioFilePath, game != "game", !child {
@@ -176,6 +182,8 @@ struct RecordButton: View {
                             .clipShape(Circle())
                             .shadow(color: .trashDropShadow.opacity(1), radius: 0, x: 0, y: 8)
                     }
+                    .accessibilityLabel("Delete recording")
+                    .accessibilityHint("Removes the current recording permanently")
                     Spacer()
                     
                 } else if let path = feelingChild?.AudioFilePath, game != "game", child {
@@ -196,6 +204,8 @@ struct RecordButton: View {
                             .clipShape(Circle())
                             .shadow(color: .trashDropShadow.opacity(1), radius: 0, x: 0, y: 8)
                     }
+                    .accessibilityLabel("Delete recording")
+                    .accessibilityHint("Removes the current recording permanently")
                     Spacer()
                     
                 } else if let path = answerGame?.AudioFilePath, game == "game" {
@@ -216,6 +226,8 @@ struct RecordButton: View {
                             .clipShape(Circle())
                             .shadow(color: .trashDropShadow.opacity(1), radius: 0, x: 0, y: 8)
                     }
+                    .accessibilityLabel("Delete recording")
+                    .accessibilityHint("Removes the current recording permanently")
                     Spacer()
                 }
             }
@@ -226,6 +238,9 @@ struct RecordButton: View {
                 pendingDelete?()
                 pendingDelete = nil
             }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Delete confirmation")
+            .accessibilityHint("Confirms whether to permanently delete your recording")
         }
         .frame(maxWidth: .infinity)
     }

@@ -22,31 +22,6 @@ class LogController: ObservableObject {
         self.modelContext = modelContext
     }
     
-    // MARK: - LogObject
-//    func addLog(role: LogRole, observation: RabitFaceObject? = nil, feeling: FeelingObject? = nil, needs: NeedObject? = nil) {
-//        let log: LogObject
-//        switch role {
-//        case .parent:
-//            log = LogObject(
-//                observationParent: observation,
-//                feelingParent: feeling,
-//                needsParent: needs
-//            )
-//        case .child:
-//            log = LogObject(
-//                observationChild: observation,
-//                feelingChild: feeling,
-//                needsChild: needs
-//            )
-//        case .game:
-//            log = LogObject(
-//                answerGame: feeling
-//            )
-//        }
-//        
-//        modelContext.insert(log)
-//        save()
-//    }
     func addLog(
         observationParent: RabitFaceObject? = nil,
         feelingParent: FeelingObject? = nil,

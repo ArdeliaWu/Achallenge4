@@ -1,16 +1,15 @@
 //
-//  HomeView.swift
+//  RabbitsTalkingView.swift
 //  challenge4
 //
-//  Created by Dhafindra Razaqa Stefano on 19/08/25.
+//  Created by Dhafindra Razaqa Stefano on 25/08/25.
 //
 
 import SwiftUI
-import SwiftData
 import Lottie
 import SwiftData
 
-struct HomeView: View {
+struct RabbitsTalkingViewHomePage: View {
     @State private var daysCount: Int = 0
     @State private var offsetAmount: CGFloat = -150
     @State private var showHowNVCView = false
@@ -26,25 +25,22 @@ struct HomeView: View {
         _showStarBackground = State(initialValue: !isClickedInitially)
         _starBackgroundOpacity = State(initialValue: isClickedInitially ? 0.0 : 1.0)
     }
+        // MARK: - Parent / Child / Game Bindings
+        @State var child: Bool = false
+        @State var observationParent: RabitFaceObject? = nil
+        @State var feelingParent: FeelingObject? = nil
+        @State var needsParent: NeedObject? = nil
     
-    // MARK: - Parent / Child / Game Bindings
-    @State var child: Bool = false
-    @State var observationParent: RabitFaceObject? = nil
-    @State var feelingParent: FeelingObject? = nil
-    @State var needsParent: NeedObject? = nil
+        @State var observationChild: RabitFaceObject? = nil
+        @State var feelingChild: FeelingObject? = nil
+        @State var needsChild: NeedObject? = nil
     
-    @State var observationChild: RabitFaceObject? = nil
-    @State var feelingChild: FeelingObject? = nil
-    @State var needsChild: NeedObject? = nil
-    
-    @State var answerGame: FeelingObject? = nil
-    
+        @State var answerGame: FeelingObject? = nil
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \LogObject.date, order: .reverse) private var logs: [LogObject]
     
     private let calendar = Calendar.current
     
-    // MARK: - Computed Properties
     private var currentMonthDaysTotal: Int {
         calendar.range(of: .day, in: .month, for: Date())?.count ?? 30
     }
@@ -67,7 +63,7 @@ struct HomeView: View {
         }
         
         isClicked = todayLogExists
-        daysCount = completedDaysCount
+        daysCount = 2
     }
     
     var body: some View {
@@ -83,7 +79,6 @@ struct HomeView: View {
                                 .frame(width: geo.size.width * 0.18)
                                 .padding(.top, geo.size.height * 0.2)
                                 .padding(.trailing, geo.size.width * 0.9)
-                                .accessibilityHidden(true)
                         }
                         Spacer()
                     }
@@ -98,7 +93,6 @@ struct HomeView: View {
                                     angle = .degrees(360)
                                 }
                             }
-                            .accessibilityHidden(true)
                     }
                     
                     VStack {
@@ -108,9 +102,8 @@ struct HomeView: View {
                             .scaledToFit()
                             .frame(width: geo.size.width * 1.8)
                     }
-                    .offset(x: geo.size.width * -0.37, y: geo.size.height * 0.21)
+                    .offset(x: geo.size.width * -0.37, y: geo.size.height * 0.25)
                     .ignoresSafeArea()
-                    .accessibilityHidden(true)
                     
 
                     
@@ -126,7 +119,6 @@ struct HomeView: View {
                                     }
                                 }
                             }
-                            .accessibilityHidden(true)
                             .offset(x: geo.size.width * -0.39, y: geo.size.height * 0)
                     }
 
@@ -136,10 +128,7 @@ struct HomeView: View {
                             daysCount: completedDaysCount,
                             daysTotal: currentMonthDaysTotal
                         )
-                        .accessibilityElement()
-                        .accessibilityLabel("Progress this month")
-                        .accessibilityValue("\(completedDaysCount) out of \(currentMonthDaysTotal) days completed")
-                        .offset(x: geo.size.width * -0.39, y: geo.size.height * 0.03)
+                        .offset(x: geo.size.width * -0.39, y: geo.size.height * 0)
     //                    .frame(width: geo.size.width * 0.3)
                         .padding(.trailing, geo.size.width * 0.6)
                         .padding(.top, geo.size.height * 0.05)
@@ -150,8 +139,6 @@ struct HomeView: View {
                     VStack {
                         Spacer()
                         TalkToRabbitBtn(showHowNVCView: $showHowNVCView, isClicked: $isClicked)
-                            .accessibilityLabel("Talk to your rabbit")
-                            .accessibilityHint("Start your reflection for today")
                             .padding(.bottom, geo.size.height * 0.1)
                     }
                     .offset(x: geo.size.width * -0.39, y: geo.size.height * 0)
@@ -168,8 +155,6 @@ struct HomeView: View {
                             
                             LottieView(name: "rabbit talk mom", loopMode: .loop, contentMode: .scaleAspectFit, speed: 1.0)
                                 .frame(width: geo.size.width * 0.35, height: geo.size.height * 0.25)
-                                .accessibilityLabel("Rabbit and child talking together")
-                                .accessibilityAddTraits(.isImage)
                                 .scaleEffect(0.17)
                                 .offset(x: geo.size.width * -0.5, y: geo.size.width * -0.12)
                         }
@@ -191,7 +176,6 @@ struct HomeView: View {
                 )
                 .background(Color("AppBg"), ignoresSafeAreaEdges: .all)
             }
-            .ignoresSafeArea()
             .navigationDestination(isPresented: $showHowNVCView) {
                 HowNVCView(
                     observationParent: $observationParent,
@@ -203,13 +187,6 @@ struct HomeView: View {
                     answerGame: $answerGame,
                     child: $child
                 )
-                .onAppear {
-                    UIAccessibility.post(notification: .screenChanged,
-                                         argument: "How to talk with your rabbit")
-                }
-            }
-            .onChange(of: daysCount) { oldValue, newValue in
-                print("Changed from \(oldValue) to \(newValue)")
             }
 
             .onAppear {
@@ -221,5 +198,5 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView()
+    RabbitsTalkingViewHomePage()
 }

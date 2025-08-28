@@ -29,10 +29,9 @@ class AudioRecorderController: ObservableObject {
     
     // MARK: - Permission
     func requestPermission(completion: @escaping () -> Void) {
-        AVAudioSession.sharedInstance().requestRecordPermission { granted in
+        AVAudioApplication.requestRecordPermission { granted in
             if granted {
                 DispatchQueue.main.async {
-                    // Configure session for mixing with background music
                     let session = AVAudioSession.sharedInstance()
                     do {
                         try session.setCategory(.playAndRecord, options: [.defaultToSpeaker, .mixWithOthers])
@@ -42,6 +41,8 @@ class AudioRecorderController: ObservableObject {
                         print("⚠️ Failed to setup audio session: \(error)")
                     }
                 }
+            } else {
+                print("❌ Microphone permission denied")
             }
         }
     }

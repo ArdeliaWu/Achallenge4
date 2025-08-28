@@ -53,6 +53,7 @@ struct CalendarContainer: View {
                                 .opacity(0.46)
                                 .frame(width: width - 1, height: 45)
                                 .position(x: xStart + width/2, y: geo.size.height/2)
+                                .accessibilityHidden(true)
                         }
                     }
                     
@@ -75,6 +76,9 @@ struct CalendarContainer: View {
                                             .fontWeight(.bold)
                                             .foregroundColor(.white)
                                     }
+                                    .accessibilityElement()
+                                    .accessibilityLabel("\(dayNumber) \(isCompleted(date) ? "completed" : "not completed")")
+                                    .accessibilityAddTraits(.isButton)
                                     .frame(maxWidth: .infinity, minHeight: 50)
                                 }
                                 .buttonStyle(PlainButtonStyle())
@@ -99,17 +103,17 @@ struct CalendarContainer: View {
     }
 }
 
-#Preview {
-    let calendar = Calendar.current
-    let currentDate = Date()
-    let daysInMonth: [Date?] = [nil, nil, nil, Date(), Date(), Date(), Date()]
-    
-    CalendarContainer(
-        currentDate: currentDate,
-        daysInMonth: daysInMonth,
-        numberOfWeeks: 1,
-        logs: [],
-        isCompleted: { _ in false },
-        getTransition: { .identity }
-    )
-}
+//#Preview {
+//    let calendar = Calendar.current
+//    let currentDate = Date()
+//    let daysInMonth: [Date?] = [nil, nil, nil, Date(), Date(), Date(), Date()]
+//    
+//    CalendarContainer(
+//        currentDate: currentDate,
+//        daysInMonth: daysInMonth,
+//        numberOfWeeks: 1,
+//        logs: [],
+//        isCompleted: { _ in false },
+//        getTransition: { .identity }
+//    )
+//}

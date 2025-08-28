@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct PopUpNeeds: View {
-    @Binding var isPresented: Bool
-    @State private var selectedNeeds: [String] = []
+//    @Binding var selectedNeeds: [String]
     
     let needs = ["Rest", "Cooperation", "Understanding", "Focus", "Support"]
     
@@ -21,62 +20,37 @@ struct PopUpNeeds: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .ignoresSafeArea(.all, edges: .all)
                 
-                // Popup content centered
-                VStack(spacing: 10) {
-                    // Header
-                    HStack {
-                        Text("Needs")
-                            .font(.title2).bold()
-                            .foregroundColor(.white)
-                        
-                        Image(systemName: "list.bullet")
-                            .font(.title2)
-                            .foregroundColor(.bulletList)
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            withAnimation { isPresented = false }
-                        }) {
-                            Image(systemName: "xmark")
-                                .font(.title3).bold()
-                                .foregroundColor(.white)
-                                .padding(8)
-                                .background(
-                                    Circle().fill(Color.cancelButton)
-                                )
-                        }
-                    }
-                    .padding(.horizontal)
-                    
-                    // Needs Chips
-                    FlowLayout(needs, id: \.self) { need in
-                        Button(action: {
-                            toggleNeed(need)
-                        }) {
-                            Text(need)
-                                .fontWeight(selectedNeeds.contains(need) ? .bold : .regular)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 8)
-                                .background(Color.cancelButton)
-                                .foregroundColor(.white)
-                                .clipShape(Capsule())
-                        }
-                    }
-                    
-                    // Done Button
-                    Button(action: {
-                        withAnimation { isPresented = false }
-                    }) {
-                        HStack {
-                            Text("Done")
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.white)
-                        }
-                        .padding(.horizontal, 135)
-                        .padding(.vertical, 15)
-                        .background(Color.checkmark)
+                Image(systemName: "list.bullet")
+                    .font(.title2)
+                    .foregroundColor(.bulletList)
+                
+                Spacer()
+                
+                Button(action: {
+                    // Close action
+                }) {
+                    Image(systemName: "xmark")
+                        .font(.title3).bold()
+                        .foregroundColor(.white)
+                        .padding(8)
+                        .background(
+                            Circle().fill(Color.cancelButton)
+                        )
+                }
+            }
+            .padding(.horizontal)
+            
+            // Needs Chips
+            FlowLayout(needs, id: \.self) { need in
+                Button(action: {
+//                    toggleNeed(need)
+                }) {
+                    Text(need)
+//                        .fontWeight(selectedNeeds.contains(need) ? .bold : .regular)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color.cancelButton)
+                        .foregroundColor(.white)
                         .clipShape(Capsule())
                         .shadow(color: .checkmarkDropShadow.opacity(1), radius: 0, x: 0, y: 6)
                     }
@@ -93,13 +67,13 @@ struct PopUpNeeds: View {
         }
     }
     
-    private func toggleNeed(_ need: String) {
-        if selectedNeeds.contains(need) {
-            selectedNeeds.removeAll { $0 == need }
-        } else {
-            selectedNeeds.append(need)
-        }
-    }
+//    private func toggleNeed(_ need: String) {
+//        if selectedNeeds.contains(need) {
+//            selectedNeeds.removeAll { $0 == need }
+//        } else {
+//            selectedNeeds.append(need)
+//        }
+//    }
 }
 
 // Custom simple FlowLayout for chips
@@ -158,3 +132,4 @@ struct FlowLayout<Data: RandomAccessCollection, Content: View, ID: Hashable>: Vi
         }
     }
 }
+

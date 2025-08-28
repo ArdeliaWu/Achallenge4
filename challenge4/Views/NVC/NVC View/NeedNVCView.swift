@@ -8,7 +8,6 @@ import SwiftUI
 import SwiftData
 
 struct NeedNVCView: View {
-    //Log Object
     @Binding var observationParent: RabitFaceObject?
     @Binding var feelingParent: FeelingObject?
     @Binding var needsParent: NeedObject?
@@ -18,90 +17,137 @@ struct NeedNVCView: View {
     @Binding var needsChild: NeedObject?
     
     @Binding var answerGame: FeelingObject?
-    
     @Binding var child: Bool
     
     @State private var selectedNeeds: [String] = []
     @State private var customNeed: String = ""
     @State private var isNextActive: Bool = false
-    
+    @State private var keyboardHeight: CGFloat = 0
+
     @Environment(\.dismiss) private var dismiss
     
     var audioName : String = "What_do_you_need"
     
     var body: some View {
-        NavigationStack {
+        GeometryReader { geo in
             ZStack {
-                Color.background
-                    .ignoresSafeArea()
-                VStack {
-                    
-                    ZStack{
-                        VStack{
-                            HStack(spacing: 0) {
-                                Text("What do you need? ")
-                                    .font(.largeTitle)
-                                    .fontDesign(.rounded)
-                                    .foregroundColor(.white)
-                                Button {
-                                    AudioPlayer.shared.playAudio(named: audioName)
-                                } label: {
-                                    Image(systemName: "speaker.wave.3.fill")
-                                        .font(.title2)
-                                        .foregroundColor(.white)
-                                }
-                                .buttonStyle(.plain)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .multilineTextAlignment(.center)
-                        }
-                        .offset(x: 0, y:-200)
-                        RabbitsTalkingView()
-                            .offset(x: 0, y:50)
-                        NeedCard(
-                            selectedNeeds: $selectedNeeds,
-                            customNeed: $customNeed,
-                            child: $child,
-                            needChild: $needsChild,
-                            needParent: $needsParent,
-                            onNext: {
-                                selectedNeeds = []
-                                child = !child
-                                print("Child value: ")
-                                print(child)
-                                
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                    isNextActive = true
-                                }
-                            }
-                        )
-                        .offset(x: 0, y: 270)
+                Color.background.ignoresSafeArea()
+                
+                // 🔹 Rabbits background
+                RabbitsTalkingView()
+                
+                // 🔹 Question text
+                HStack(spacing: 4) {
+                    Text("What do you need?")
+                        .font(.largeTitle)
+                        .fontDesign(.rounded)
+                        .foregroundColor(.white)
+                        .accessibilityLabel("Question: What do you need?")
+                        .accessibilityAddTraits(.isHeader)
+                        .multilineTextAlignment(.center)
+
+                    Button {
+                        AudioPlayer.shared.playAudio(named: audioName)
+                    } label: {
+                        Image(systemName: "speaker.wave.3.fill")
+                            .font(.system(size: geo.size.width * 0.06))
+                            .foregroundColor(.white)
                     }
-                    
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Play question audio")
+                    .accessibilityHint("Plays 'What do you need?'")
                 }
-                .navigationDestination(isPresented: $isNextActive) {
-                    if child {
-                        HowNVCView(observationParent: $observationParent, feelingParent: $feelingParent, needsParent: $needsParent, observationChild: $observationChild, feelingChild: $feelingChild, needsChild: $needsChild, answerGame: $answerGame, child: $child)
-                            .transaction { transaction in
-                                transaction.disablesAnimations = true
-                            }
-                    } else{
-                        RandomizeView(observationParent: $observationParent, feelingParent: $feelingParent, needsParent: $needsParent, observationChild: $observationChild, feelingChild: $feelingChild, needsChild: $needsChild, answerGame: $answerGame, child: $child)
-                            .transaction { transaction in
-                                transaction.disablesAnimations = true
-                            }
+                .accessibilityElement(children: .combine)
+                .frame(maxWidth: geo.size.width * 0.9)
+                .position(x: geo.size.width / 2, y: geo.size.height * 0.33)
+                
+                // 🔹 NeedCard
+                NeedCard(
+                    selectedNeeds: $selectedNeeds,
+                    customNeed: $customNeed,
+                    child: $child,
+                    needChild: $needsChild,
+                    needParent: $needsParent,
+                    onNext: {
+                        selectedNeeds = []
+                        child.toggle()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            isNextActive = true
+                        }
                     }
+                )
+                .frame(width: geo.size.width, height: geo.size.height)
+                .position(x: geo.size.width / 2, y: geo.size.height * 0.85 + 20 - keyboardHeight / 2 )
+                VStack {
+                    HStack {
+                        Button(action: { dismiss() }) {
+                            BackButton()
+                        }
+                        .accessibilityLabel("Back")
+                        .accessibilityHint("Goes back to the previous screen")
+                        .padding(.leading, 16)
+                        .padding(.top, 46)
+
+                        Spacer()
+                    }
+                    Spacer()
                 }
             }
+        }
+        .ignoresSafeArea()
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
+            if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+                withAnimation(.easeOut(duration: 0.25)) {
+                    keyboardHeight = keyboardFrame.height - 200
+                }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+            withAnimation(.easeOut(duration: 0.25)) {
+                keyboardHeight = 0
+            }
+        }
+        // 🔹 Next step in the SAME navigation stack
+        .navigationDestination(isPresented: $isNextActive) {
+            if child {
+                HowNVCView(
+                    observationParent: $observationParent,
+                    feelingParent: $feelingParent,
+                    needsParent: $needsParent,
+                    observationChild: $observationChild,
+                    feelingChild: $feelingChild,
+                    needsChild: $needsChild,
+                    answerGame: $answerGame,
+                    child: $child
+                )
+                .transaction { $0.disablesAnimations = true }
+            } else {
+                RandomizeView(
+                    observationParent: $observationParent,
+                    feelingParent: $feelingParent,
+                    needsParent: $needsParent,
+                    observationChild: $observationChild,
+                    feelingChild: $feelingChild,
+                    needsChild: $needsChild,
+                    answerGame: $answerGame,
+                    child: $child
+                )
+                .transaction { $0.disablesAnimations = true }
+            }
+        }
+        .onTapGesture {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: { dismiss() }) {
-                    BackButton()
-                }
-            }
-        }
+//        .toolbar {
+//            ToolbarItem(placement: .navigationBarLeading) {
+//                Button(action: { dismiss() }) {
+//                    BackButton()
+//                        .accessibilityLabel("Back")
+//                        .accessibilityHint("Goes back to the previous screen")
+//                }
+//            }
+//        }
     }
 }
 

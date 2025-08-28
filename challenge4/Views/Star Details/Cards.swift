@@ -12,6 +12,34 @@ struct Cards: View {
     enum CardState {
         case feeling, why, need, games
     }
+    private var accessibilityTitle: String {
+        switch state {
+        case .feeling:
+            return "Feeling card: \(rabitFace ?? "No feeling")"
+        case .why:
+            return "Reason card"
+        case .need:
+            if let needs = needs?.needs, !needs.isEmpty {
+                return "Needs card: \(needs.map { $0.text }.joined(separator: ", "))"
+            }
+            return "Needs card: no needs logged"
+        case .games:
+            return "Game story card"
+        }
+    }
+
+    private var accessibilityHint: String {
+        switch state {
+        case .feeling:
+            return "Shows the current feeling"
+        case .why:
+            return "Play audio to hear the reason for the feeling"
+        case .need:
+            return "Shows needs"
+        case .games:
+            return "Play audio to hear the game story"
+        }
+    }
 
     var state: CardState
     
@@ -41,6 +69,9 @@ struct Cards: View {
         .background(Color("EmotionBarColor"))
         .cornerRadius(20)
         .padding(.horizontal, 5)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(accessibilityTitle)
+        .accessibilityHint(accessibilityHint)
     }
 
     @ViewBuilder
@@ -71,6 +102,7 @@ struct Cards: View {
             } else {
                 Text("No reason recorded")
                     .foregroundColor(.gray)
+                    .accessibilityLabel("No reason recorded")
             }
             
         case .need:
@@ -86,6 +118,9 @@ struct Cards: View {
                             .clipShape(Capsule())
                     }
                 }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(needsObj.needs.map { $0.text }.joined(separator: ", "))
+                .accessibilityHint("These are the needs")
                 .padding(.bottom, 12)
             } else {
                 Text("No needs logged")
@@ -105,6 +140,7 @@ struct Cards: View {
             } else {
                 Text("No game story recorded")
                     .foregroundColor(.gray)
+                    .accessibilityLabel("No reason recorded")
             }
 
         }
